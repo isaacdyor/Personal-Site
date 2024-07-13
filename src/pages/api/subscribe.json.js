@@ -60,10 +60,3 @@ export async function POST({ request }) {
     );
   }
 }
-
-export async function GET({ params }) {
-  return Response.json({
-    success: true,
-    result: "Data from Astro Endpoint!",
-  });
-}

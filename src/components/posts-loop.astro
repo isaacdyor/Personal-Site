@@ -17,7 +17,7 @@ const postsLoop = allPosts.slice(0, count).map((post) => {
   };
 });
 
-function formatDateString(dateString: string): string {
+function formatDateString(dateString: Date): string {
   const date = new Date(dateString);
 
   const options: Intl.DateTimeFormatOptions = {
@@ -111,7 +111,7 @@ function getOrdinalSuffix(day: number): string {
             <span>{post.description}</span>
           </p>
           <div class="mt-2.5 text-xs font-medium text-neutral-800 dark:text-neutral-300">
-            Posted on {formatDateString(post.dateFormatted)}
+            Posted on {formatDateString(new Date(post.dateFormatted))}
           </div>
         </div>
       </div>
