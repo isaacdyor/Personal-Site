@@ -2,14 +2,52 @@
 import { getCollection } from "astro:content";
 const allPosts = await getCollection("post");
 
+allPosts.sort(
+  (a, b) =>
+    new Date(b.data.dateFormatted).getTime() -
+    new Date(a.data.dateFormatted).getTime()
+);
+
 const { count } = Astro.props;
 
 const postsLoop = allPosts.slice(0, count).map((post) => {
-	return {
-		...(post.data || {}),
-		link: `/post/${post.slug}`,
-	};
+  return {
+    ...(post.data || {}),
+    link: `/post/${post.slug}`,
+  };
 });
+
+function formatDateString(dateString: string): string {
+  const date = new Date(dateString);
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  const formattedDate = date.toLocaleDateString("en-US", options);
+
+  // Add ordinal suffix to the day
+  const day = date.getDate();
+  const dayWithSuffix = `${day}${getOrdinalSuffix(day)}`;
+
+  // Replace the day in the formatted date with the day including its suffix
+  return formattedDate.replace(day.toString(), dayWithSuffix);
+}
+
+function getOrdinalSuffix(day: number): string {
+  if (day > 3 && day < 21) return "th"; // Covers 11th, 12th, 13th, etc.
+  switch (day % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
+}
 ---
 
 {
@@ -73,10 +111,10 @@ const postsLoop = allPosts.slice(0, count).map((post) => {
             <span>{post.description}</span>
           </p>
           <div class="mt-2.5 text-xs font-medium text-neutral-800 dark:text-neutral-300">
-            Posted on {post.dateFormatted}
+            Posted on {formatDateString(post.dateFormatted)}
           </div>
         </div>
       </div>
-    )
+    );
   })
 }
